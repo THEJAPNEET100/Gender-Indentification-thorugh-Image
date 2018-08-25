@@ -1,0 +1,59 @@
+from PIL import Image
+import numpy as np
+
+
+# method for reading file into array
+def set_center(gender):
+    first = "C:\\Users\\Jchahal\\PycharmProjects\\gradient\\"
+    last = " file.txt"
+    path = first + str(gender) + last
+    file = open(path, "r")
+    arr = file.readlines()
+    file.close()
+    return arr
+
+
+# method for getting input image
+def get_test_image(file_path):
+    return Image.open(str(file_path))
+
+
+# method for finding distance between two arrays
+def difference(a, b):
+    n = len(b)
+    sum = 0
+    for i in range(0, n):
+        sum = sum + np.power(int(float(a[i])) - int(float(b[i])), 2)
+    return np.power(sum, 0.5)
+
+
+# method for comparing image
+def compare(img, c_m, c_f):
+    img.resize((300, 300))
+    pix = img.load()
+    arr = []
+    for i in range(0, 300):
+        for j in range(0, 300):
+            pixel = pix[i, j]
+            avg = pixel[0] + pixel[1] + pixel[2]
+            arr.append(avg/3)
+    dist_male = difference(arr, c_m)
+    dist_female = difference(arr, c_f)
+    if dist_female<dist_male:
+        print("confidence = ")
+        print((dist_male*100)/ dist_female)
+        return "female"
+    else :
+        print("confidence = ")
+        print((dist_female * 100) / dist_male)
+        return "male"
+
+
+def execute():
+    m_center = set_center("male")
+    f_center = set_center("female")
+    test_image = get_test_image("C:\\Users\\Jchahal\\Desktop\\nojo.jpg")
+    print(compare(test_image, m_center, f_center))
+
+
+execute()
